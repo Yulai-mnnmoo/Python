@@ -356,6 +356,20 @@ if 条件：
 	语句组
 ```
 
+```python
+#if 结构
+score = int(input("请输入一个人0~100的整数："))
+
+if score<60:
+    print("不合格")
+
+if (score>=60) and (score<80):
+    print("仍需努力")
+
+if score>=80:
+    print("优秀")
+```
+
 #### if-else结构
 
 ```xml
@@ -363,6 +377,18 @@ if 条件：
 	语句组1
 else:
 	语句组2
+```
+
+```python
+#if-else 结构
+score = int(input("请输入一个人0~100的整数："))
+if score>=60:
+    if score>=85:
+        print("优秀")
+    else:
+        print("还差点！")
+else:
+    print("不合格")
 ```
 
 #### if-elif-else结构
@@ -376,6 +402,19 @@ else：
     语句组3
 ```
 
+```python
+#if-elif-else 结构
+score3 = int(input("请输入一个人0~100的整数："))
+if score3>90:
+    print("A")
+elif score3>80:
+    print("B")
+elif score3>70:
+    print("C")
+else:
+    print("D")
+```
+
 
 
 ### 循环语句
@@ -387,6 +426,22 @@ while 循环条件：
 		语句组]
 ```
 
+```python
+#while循环
+i=0
+while i*i<100:
+    i+=1
+print("i",i,i*i)
+
+#while循环 else 
+i=0
+while i*i<100:
+    i+=1
+    print(str(i)+'*'+str(i) +'=',i*i)
+else:
+    print("over")
+```
+
 
 
 ### for语句
@@ -396,6 +451,17 @@ for 变量 in 可迭代对象：
 		循环体语句组
 	[else:
 		语句组]
+```
+
+```python
+#for循环
+for item in "Hell":
+    print("item",item)
+numbers = [54,66,88,95,10]
+for it in numbers:
+    print(it)
+else:
+    print("over")
 ```
 
 
@@ -410,6 +476,23 @@ break语句
 	break语句用于强行退出循环体，不再执行循环体中剩余的语句
 continue语句
 	continue语句用于结束本次循环，跳过循环体中尚未执行的语句,接着进行终止条件的判断，以决定是否继续循环
+
+```python
+#跳转语句
+# for ite in range(10):
+#     if ite ==3:
+#         break
+#     print(ite)
+# else:
+#     print("ove")
+
+for ite in range(10):
+    if ite ==3:
+        continue
+    print(ite)
+else:
+    print("over11")
+```
 
 
 
