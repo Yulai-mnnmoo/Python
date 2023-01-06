@@ -974,7 +974,222 @@ print(sr.split('k'),sr.split('k',1))  #返回值是数组   maxsplit是最大分
 
 
 
+## 函数
 
+​	函数具有函数名、参数和返回值。可以在中但是类之外定义，作用域是当前模块，称为函数；可以在别的函数中定义，称为嵌套函数；可以在类中定义，称为方法。
+
+### 定义函数
+
+​	def 函数名（形式参数列表）:
+		函数体
+		return返回值
+
+```python
+#定义函数
+def rect_area(width,height):
+    area=width*height
+    return area
+
+def print_area(width,height):
+    a=width*height
+    print('{0}x{1}的长方形的面积是:{2:0.2f}',width,height,a)
+```
+
+
+
+### 调用函数
+
+#### 	使用位置参数调用函数
+
+​		在调用函数时传递的实参与定义函数时的形参顺序一致，这是调用函数的基本形式
+
+#### 	使用关键字参数调用函数
+
+​		在调用函数时可以采用“关键字=实参”的形式，其中，关键字的名称就是定义函数时形参的名称。
+
+```python
+#调用函数  使用位置参数调用
+r_area = rect_area(200,100)
+print('{0}x{1}的长方形的面积是:{2:0.2f}'.format(200,100,r_area))
+
+#调用函数  使用关键字产参数调用
+r_area = rect_area(width=200,height=100)
+print('{0}x{1}的长方形的面积是:{2:0.2f}'.format(200,100,r_area))  #关键字的名称定义函数时形参的名称  不在受顺序限制
+
+```
+
+
+
+### 参数的默认值
+
+​	调用时没有提供参数，则使用默认值
+
+```python
+#参数的默认值
+def make_coffee(name='冰美式'):
+    return '制作一杯{0}'.format(name)
+
+coffee1=make_coffee('xxx')
+coffee2=make_coffee() #不传参数时 使用默认值
+
+print('kkk',coffee1,coffee2)
+```
+
+
+
+### 可变参数
+
+​	Py中的函数可以定义接收不确定数据的参数，即可变参数，可变参数有两种，即在参数前加*或**
+
+#### 	基于元组的可变参数（*可变参数）	
+
+​		*可变参数在函数中被组装成一个元组。
+
+```python
+#可变参数   基于元组
+def sum(*numbers):
+    total =0.0
+    for i in numbers:
+        total+=i
+    return total
+
+print(sum(10,30,50))
+print(sum(20))
+
+```
+
+
+
+#### 	基于字典的可变参数（**可变参数）
+
+​		**可变参数在函数中被组装成一个字典。
+
+```python
+#可变参数   基于字典
+def show_info(**info):
+    for key,value in info.items():
+        print('{0} -- {1}'.format(key,value))
+
+show_info(s_sto=1002,s_name='zhangsan')
+show_info(s_sto=1001,s_name='lisi',sex=True)
+```
+
+
+
+### 函数中变量的作用域
+
+​	变量可以在模块中创建，作用域（变量的有效范围）是整个模块，被称为全局变量。变量也可以在函数中创建，在默认情况下作用域是整个函数，被称为局部变量。
+
+```python
+#变量的作用域
+x=20
+
+def f1():
+    # global x    global变量 将局部变量提升为全局变量
+    x=10
+    print('x={0}'.format(x))
+
+f1()
+print('xxx={0}'.format(x))
+```
+
+
+
+### 函数类型
+
+​	Python中的任意一个函数都有数据类型，这种数据类型是function，被称为函数类型。
+
+#### 	理解函数类型
+
+​		函数类型的数据与其他类型的数据是一样的，任意类型的数据都可以作为函数返回值使用，还可以作为函数参数使用
+
+```python
+# 函数类型
+def add(a,b):
+    a+b
+    return a+b
+
+def sub(a,b):
+    a-b
+    return a-b
+
+def cal(opr):
+    if opr=='+++':
+        return add
+    else:
+        return sub
+
+f1=cal('add')
+f2=cal('sub')
+print('10-5={0}'.format(f1(10,5)))
+```
+
+
+
+#### 	过滤函数filter（）
+
+​		在Python中定义了一些用于数据处理的函数，如filter（）和map（）等
+
+```python
+#过滤函数
+def f3(x):
+    return x>50
+
+data1=[20,30,50,53,83,22]
+filterd=filter(f3,data1)
+data2=list(filterd)
+
+print(data2)
+```
+
+​	
+
+#### 	映射函数map（）
+
+​		map（）函数用于对容器中的元素进行映射（或变换）
+
+
+
+### lambd
+
+```python
+#映射函数
+def f4(x):
+    return x*2
+
+data3=list(map(f4,data1))
+
+print(data3)
+```
+
+### lambda（）函数   --  匿名函数
+
+​	Python中使用lambda关键字定义匿名函数 
+	语法：lambda参数列表：lambda体
+	lambda（）函数与有名称的函数一样，都是函数类型	
+
+```python
+#匿名函数
+def cals(opr):
+    if opr=='+':
+        return lambda a,b:(a+b)   #替代add函数
+    else:
+        return lambda a,b:(a-b) #替代sub函数
+
+f1=cals('+')
+f2=cals('-')
+print('10-5={0}'.format(f1(10,5)))
+
+data1=[20,30,50,53,83,22]
+fi=filter(lambda a:(a>20),data1)
+data5=list(fi)
+
+print(data5)
+```
+
+
+​		
+​	
 
 
 
