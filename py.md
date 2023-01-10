@@ -1622,3 +1622,591 @@ start(Car3())
 
 
 
+## 异常
+
+### 除零异常 
+
+​	在数学中，任何整数都不能除以0，如果在计算机程序中将整数除以0，则会引发异常   ZeroDivisionError
+
+```python
+#除0异常
+i=input('请输入数字：')
+n=8888
+result=n/int(i)
+
+print(result)
+print('{0}除以{1}等于{2}'.format(n,i,result))
+
+```
+
+
+
+### 捕获异常
+
+​	不能防止用户输入0，但在出现异常后我们能捕获并处理异常，不至于让程序发生终止并退出
+
+#### 	try-except语句
+
+​		在try代码块中包含在执行过程中可能引发异常的语句，如果没有发生异常，则跳到except代码块执行，这就是异常捕获
+			语法：try:
+					<可能引发异常的语句>
+				  except[异常类型]：
+					<处理异常>
+
+```python
+#捕获异常  
+i=input('请输入数字：')
+n=8888
+try:
+    result=n/int(i)
+
+    print(result)
+    print('{0}除以{1}等于{2}'.format(n,i,result))
+except ZeroDivisionError as e:  #指定具体的异常类型
+    print('不能除以0，异常：{}'.format(e))
+```
+
+
+
+#### 	多个except代码块
+
+​			语法：try:
+					<可能引发异常的语句>
+				  except[异常类型1]
+					<处理异常>
+				  except[异常类型2]
+					<处理异常>
+				  ...
+				  except：
+					<处理异常>
+
+```python
+#捕获异常  多个except代码块
+i=input('请输入数字：')
+n=8888
+try:
+    result=n/int(i)
+
+    print(result)
+    print('{0}除以{1}等于{2}'.format(n,i,result))
+except ZeroDivisionError as e:  #指定具体的异常类型
+    print('不能除以0，异常：{}'.format(e))
+except ValueError as e:  #指定具体的异常类型
+    print('输入的是无效数字，异常：{}'.format(e))
+```
+
+
+
+#### 	多重异常捕获
+
+​		存在多个except代码块，会客观上增加代码，可以合并处理
+
+```python
+#多重捕获异常
+i=input('请输入数字：')
+n=8888
+try:
+    result=n/int(i)
+
+    print(result)
+    print('{0}除以{1}等于{2}'.format(n,i,result))
+except (ZeroDivisionError,ValueError) as e:  #指定具体的异常类型
+    print('不能除以0，异常：{}'.format(e))
+```
+
+
+
+#### 	try-except语句嵌套
+
+​			try-except语句还可以嵌套
+
+​	
+
+```python
+# try-except语句嵌套
+i=input('请输入数字：')
+n=8888
+try:
+    i2=int(i)
+    try:
+        result = n / int(i)
+        print('{0}除以{1}等于{2}'.format(n, i, result))
+    except ZeroDivisionError as e1:
+        print('不能除以0，异常：{}'.format(e1))
+except ValueError as e2:  #指定具体的异常类型
+    print('输入的是无效数字，异常：{}'.format(e2))
+```
+
+
+
+### finally代码块释放资源
+
+​	有时在try-except语句中会占用一些资源，例如打开的文件、网络连接、打开的数据库及数据结果集等都会占用计算机资源，需要程序员释放这些资源。为了确保这些资源能够被释放，可以使用finally代码块
+		语法：try:
+				<可能引发异常的语句>
+			  except[异常类型1]
+				<处理异常>
+			  except[异常类型2]
+				<处理异常>
+			  ...
+			  except：
+				<处理异常>
+			  finally:
+				<释放资源>
+
+```python
+#finally
+i=input('请输入数字：')
+n=8888
+try:
+    i2=int(i)
+    try:
+        result = n / int(i)
+        print('{0}除以{1}等于{2}'.format(n, i, result))
+    except ZeroDivisionError as e1:
+        print('不能除以0，异常：{}'.format(e1))
+except ValueError as e2:  #指定具体的异常类型
+    print('输入的是无效数字，异常：{}'.format(e2))
+
+finally:
+    # 释放代码资源
+    print("资源释放...")
+```
+
+### 自定义异常类
+
+​	为了提高代码的可重用性，自己编写一些Python类库，实现自定义异常类，需要继承Exception类或其子类
+
+```python
+# 自定义异常
+class ZhiException(Exception):
+    def __init__(self,message):
+        super().__init__(message)
+```
+
+
+
+### 手动引发异常
+
+​	到目前为止，接触到的异常都是由于解释器引发的，亦可以通过raise语句手动引发
+
+```python
+# 手动引发异常
+i=input('请输入数字：')
+n=8888
+try:
+    result=n/int(i)
+
+    print(result)
+    print('{0}除以{1}等于{2}'.format(n,i,result))
+except ZeroDivisionError as e:  #指定具体的异常类型
+    #print('不能除以0，异常：{}'.format(e))
+    raise ZhiException('不能除以0')
+except ValueError as e:  #指定具体的异常类型
+    #print('输入的是无效数字，异常：{}'.format(e))
+    raise ZhiException('输入的是无效数字')
+```
+
+
+
+
+
+## 常用的内置模块
+
+### 数学计算模块 
+
+​	math 在math模块中包含数学运算相关的函数等，例如指数、对数、平方根和三角函数等
+
+![](D:\work\个人包\Python\图片\math模块常用函数.png)
+
+```python
+#数学计算模块  math
+import math
+
+print(math.ceil(2.4),math.floor(2.4),math.ceil(-2.4),
+      math.floor(-2.4),math.pow(5,3),math.sqrt(3.6),math.log(125,5),
+      math.degrees(0.5*math.pi),math.radians(180/math.pi),math.sin(0.3))
+```
+
+
+
+### 日期时间模块
+
+datetime模块中提供了以下几个类：
+	datetime：包含时间和日期。
+	date：只包含日期。
+	time：只包含时间。
+	timedelta：计算时间跨度。
+	tzinfo：时区信息。
+
+#### datetime类
+
+​	datetime类表示日期和时间等信息，我们可以使用如下构造方法创建datetime对象:
+	datetime.datetime(year,month,day,hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+	常用方法：
+		datetime.today（）：返回当前的本地日期和时间
+		datetime.now（tz=None）：返回指定时区的当前日期和时间，参数tz用于设置时区，如果参数tz为None或省略，则等同于today（）。
+		datetime.fromtimestamp（timestamp，tz=None）：返回与UNIX时间戳对应的本地日期和时间。UNIX时间戳是从1970年1月1日00：00：00开始到现在为止的总秒数。
+
+![](D:\work\个人包\Python\图片\datatime类参数.png)
+
+```python
+#日期时间模块 datetime类
+import datetime
+
+# print(datetime.datetime(2020,2,30))  #30 指定的day 参数超出范围 会发生ValueError 异常
+print(datetime.datetime(2020,1,29))
+print(datetime.datetime(2020,1,29,0,0))
+#print(datetime.datetime(2020,1,29,23,60,59,10000)) #60 指定的minute 参数超出范围 会发生ValueError 异常
+print(datetime.datetime(2020,1,29,23,56,59,10000))
+print(datetime.datetime.today())
+print(datetime.datetime.now())
+print(datetime.datetime.fromtimestamp(9999999999.999)) #在python中  时间戳的单位是秒
+```
+
+
+
+#### date类
+
+​	date类表示日期信息，我们可以使用如下构造方法创建date对象：
+	datetime.date(year,month,day)
+	常用方法：
+		date.today（）：返回当前的本地日期
+		date.fromtimestamp（timestamp）：返回与UNIX时间戳对应的本地日期
+
+```python
+#日期时间模块 date类
+import datetime
+
+print(datetime.date(2022,2,28))
+print(datetime.date.today())
+print(datetime.date.fromtimestamp(9999999999.999))
+```
+
+
+
+#### time类
+
+​	time类表示一天中的时间信息，我们可以使用如下构造方法创建time对象：
+	datetime.time(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+
+```python
+#日期时间模块 time类
+import datetime
+
+print(datetime.time(23,59,59,10000))
+#print(datetime.time(23,60,59,10000))  #分 60 超出范围
+```
+
+
+
+#### 计算时间跨度类——timedelta
+
+​	timedelta用于计算datetime date类 time类对象的时间间隔，可以使用如下构造方法创建对象：
+				  			     datetime.timedelta(days=0,seconds=0,microsecond=0,milliseconds=0,minutes=0,hours=0,weeks=0)
+
+![](D:\work\个人包\Python\图片\timedelta类参数.png)
+
+```python
+#日期时间模块 timedelta类
+import datetime
+d=datetime.datetime.today()
+delta=datetime.timedelta(10)   #创建10天后的对象
+d+=delta
+d1=datetime.date(2020,1,1)
+dalta1=datetime.timedelta(weeks=5)  #创建五周后的对象
+d1-=dalta1
+
+print(d,d1)
+```
+
+
+
+#### 将日期时间与字符串相互转换
+
+​	1.将日期时间对象转换为字符串时，称之为日期时间格式化 
+		使用strftime（）方法进行日期时间的格式化
+	2.将字符串转换为日期时间对象的过程，叫作日期时间解析		
+
+​		使用datetime.strptime（date_string，format）类方法进行日期时间解析。
+
+![](D:\work\个人包\Python\图片\常用的日期和时间格式控制符.png)
+
+```python
+#字符串时间格式转化
+import datetime
+d=datetime.datetime.today()
+d.strftime('%Y-%m-%d %H:%M:%S') #设置日期时间格式化
+
+print(d)
+d.strftime('%Y-%m-%d')
+
+print(d)
+
+str_date='2020-02-29 10:40:26'
+date=datetime.datetime.strptime(str_date,'%Y-%m-%d %H:%M:%S')  #将一个字符串按照指定格式破解为日期时间对象
+```
+
+
+
+### 正则表达式模块  --  re
+
+​	正则表达式指预先定义好一个“字符串模板”，通过这个“字符串模板”可以匹配、查找和替换那些匹配“字符串模板”的字符串
+
+#### 字符串匹配
+
+​	字符串匹配指验证一个字符串是否符合指定的“字符串模板”，常用于用户输入验证。
+	使用match（p，text）函数进行字符串匹配  其中的参数p是正则表达式，即字符串模板，text是要验证的字符串。
+
+```python
+#正则 字符串匹配
+import re
+p=r'\w+@zhijieketang\.com'
+email1='tang@zhijieketang.com'
+
+m=re.match(p,email1)   #返回非空的match对象 说明匹配成功
+email2='abc@163.com'
+m1=re.match(p,email2)   #m1为None 表示匹配失败
+
+print(m,type(m),m1)
+```
+
+
+
+#### 字符串查找
+
+​	字符串查找指从一个字符串中查找匹配正则表达式的子字符串，常用于数据分析、网络爬虫等数据处理中
+	search（p，text）：在text字符串中查找匹配的内容，如果找到，则返回第1个匹配的Match对象，否则返回None。p是正则表达式。
+	findall（p，text）：在text字符串中查找所有匹配的内容，如果找到，则返回所有匹配的字符串列表；如果一个都没有匹配，则返回None。
+
+```python
+#正则 字符串查找
+import re
+p=r'\w+@zhijieketang\.com'
+text="Tom's email is tang@zhijieketang.com"
+text1="Tom's email is abc@163.com"
+m=re.search(p,text)
+m1=re.search(p,text1)
+
+print(m,m1)  #查找成功返回match对象   查找失败则返回为None
+
+p=r'Java|java|JAVA'
+text='I like java and Java and JAVA'
+
+m=re.findall(p,text)  #findall 返回匹配的字符串列表  没有匹配的值 则为None
+print(m)
+```
+
+
+
+#### 字符串替换
+
+​	正则表达式的字符串替换函数是sub（），该函数替换匹配的子字符串
+	语法：re.sub(pattern,repl,string,count=0)
+
+```python
+#正则 字符串查找
+import re
+p=r'\d+' #匹配数字出现一次或多次的正则表达式
+text='AB12cd34Ef'
+replace=re.sub(p," ",text)
+
+print(replace) #返回值是替换过后的字符串
+replace=re.sub(p," ",text,count=1)
+
+print(replace) #count=1 表示要替换的最大数量
+```
+
+
+
+#### 字符串分割
+
+​	split（）函数进行字符串分割该函数按照匹配的子字符串进行字符串分割，返回字符串列表对象
+	语法：re.split(pattern,string,maxsplit=0)
+	参数pattern是正则表达式；参数string是要分割的字符串；参数maxsplit是最大分割次数；maxsplit的默认值为零，表示分割次数没有限制。
+
+```python
+#正则 字符串分割
+import re
+p=r'\d+' #匹配数字出现一次或多次的正则表达式
+text='AB12cd34Ef'
+clist=re.split(p,text,maxsplit=0)
+
+print(clist)
+clist=re.split(p,text,maxsplit=1)
+
+print(clist)
+```
+
+
+
+
+
+## 文件读写
+
+### 文本文件和二进制文件的区别
+
+​	在文本文件的内部以字符形式存储数据，字符是有编码的；在二进制文件的内部以字节形式存储数据，没有编码概念
+
+### 打开文件
+
+​	使用文件之前要先将文件打开，这通过open（）函数实现。
+	语法：open(file,mode='r',encding=None,errors=None)
+
+#### 	file参数
+
+​		用于表示要打开的文件，可以是字符串或整数 
+		file是字符串，则表示文件名，文件名既可以是当前目录的相对路径 也可以是绝对路径
+		file是整数，则表示一个已经打开的文件
+
+#### 	mode参数
+
+​		用于设置文件打开模式，用字符串表示
+		t：以文本文件模式打开文件
+		b：以二进制文件模式打开文件
+		r：以只读模式打开文件
+		w：以只写模式打开文件，不能读内容。 如果文件不存在，则创建文件；如果文件存在，则覆盖文件的内容。
+		x：以独占创建模式打开文件，如果文件不存在，则创建并以写入模式打开；如果文件已存在，则引发FileExistsError异常。
+		a：以追加模式打开文件，不能读内容。如果文件不存在，则创建文件；如果文件存在，则在文件末尾追加。
+		+：以更新（读写）模式打开文件，必须与r、w或a组合使用，才能设置文件为读写模式。
+
+![](D:\work\个人包\Python\图片\文件的打开模式.png)
+
+#### 	encoding参数
+
+​		用来指定打开文件时的文件编码，默认是UTF-8编码，主要用于打开文本文件。
+
+#### 	errors参数
+
+​		errors参数用来指定在文本文件发生编码错误时如何处理  'ignore'  --》 忽略该错误，程序会继续执行
+	
+
+```python
+#打开文件
+f=open('test.txt','w+')  #以w+模式打开文件 如果不存在 则创建文件
+f.write("World")
+
+print('创建了test.txt文件 ,world写入到文件中')
+
+f=open('test.txt','r+') #以r+模式打开文件 文件已存在 则覆盖文件内容
+f.write('Hello')
+
+print('覆盖了文件内容')
+
+f=open('test.txt','a') #以a模式打开文件 会在文件末尾追加内容
+f.write(" ")
+
+print("在文件内容后追加了 空格")
+
+# fname=r'D:\work\个人包\Python\pro_base\test.txt'  #采用原始字符串表示绝对路径文件名 其中的 \ 不需要转义
+# fname='D:\\work\\个人包\\Python\\pro_base\\test.txt' #采用普通字符串 其中的 \ 需要转义
+fname='D:/work/个人包/Python/pro_base/test.txt'  # 采用【普通字符串表示绝对路径文件名 可将反斜杠(\)改为斜杠(/)
+f=open(fname,"a+") #以a+模式打开文件 也会在文件末尾追加内容
+f.write("World")
+print("在文件内容后追加了 world")
+```
+
+打开文件时，a和a+有什么区别？
+	a能追加文件，不可读文件；a+可以追加写文件，也可以读文件
+
+
+
+### 关闭文件
+
+​	在打开文件后，如果不再使用该文件，则应该将其关闭，会用到close（）方法
+
+#### 在finally代码块中关闭文件
+
+​	保证对文件的操作无论是正常结束还异常结束，都能够关闭文件
+
+```python
+#关闭文件  使用finally关闭
+f_name='test.txt'
+f=None
+try:
+    f=open(f_name)    #可能引发FileNotFoundError异常
+    print("打开文件成功")
+    content=f.read()   # 可能引发OSError异常
+    print(content)
+except FileExistsError as e:
+    print("文件不存在")
+except OSError as e:
+    print("处理OSError异常")
+finally:
+    if f is not None:  # 判断文件是否有数据 如果有数据 说明文件是已经打开成功了的
+        f.close() #关闭文件
+        print('关闭文件成功')
+
+```
+
+
+
+#### 在with as代码块中关闭文件
+
+​	with as提供了一个代码块，在as后面声明一个资源变量，在with as代码块结束之后自动释放资源
+读写文本文件
+
+```python
+#关闭文件  使用with as 关闭
+f_name='test.txt'
+with open(f_name) as f:   #代码结束后自动关闭释放资源  优化代码结构 更简洁
+    content = f.read()
+    print(content)
+```
+
+
+
+#### 读写文本文件的相关方法
+
+​	read（size=-1）：从文件中读取字符串，size限制读取的字符数，size=-1指对读取的字符数没有限制。
+	readline（size=-1）：在读取到换行符或文件尾时返回单行字符串。如果已经到文件尾，则返回一个空字符串。size是限制读取的字符数，size=-1表示没有限制。
+	readlines（）：读取文件数据到一个字符串列表中，每一行数据都是列表的一个元素。
+	write（s）：将字符串s写入文件中，并返回写入的字符数。
+	writelines（lines）：向文件中写入一个字符串列表。不添加行分隔符，因此通常为每一行末尾都提供行分隔符。
+	flush（）：刷新写缓冲区，在文件没有关闭的情况下将数据写入文件中。
+
+### 复制文本文件
+
+```python
+#复制文本文件
+f_name1='test.txt'
+
+with open(f_name1,'r',encoding='gbk') as f:  #以只读模式 打开文件 注意文件编码是gbk 与字符集的大小没有关系
+    lines=f.readlines()   #读取所有数据到一个列表中
+    copy_f_name='src_test.txt'
+    with open(copy_f_name,'w',encoding='utf-8') as copy_f: #以只写模式 打开文本文件 注意文件编码格式为utf-8
+        copy_f.writelines(lines)  #把列表数据lines写到文件中
+        print('文件复制成功')
+
+```
+
+
+
+### 读写二进制文件
+
+​	二进制文件的读写单位是字节，不需要考虑编码问题
+
+#### 主要读写方法
+
+​	read（size=-1）：从文件中读取字节，size限制读取的字节数，如果size=-1，则读取全部字节。
+	readline（size=-1）：从文件中读取并返回一行。size是限制读取的行数，如果size=-1，则没有限制。
+	readlines（）：读取文件数据到一个字节列表中，每一行数据都是列表的一个元素。
+	write（b）：写入b字节，并返回写入的字节数。
+	writelines（lines）：向文件中写入一个字节列表。不添加行分隔符，因此通常为每一行末尾都提供行分隔符。
+	flush（）：刷新写缓冲区，在文件没有关闭的情况下将数据写入文件中。
+		
+
+### 复制二进制文件
+
+```python
+#复制二进制文件
+f_name ='logo.png'
+with open(f_name,'rb') as f:
+    b=f.read()
+    copy_f_name='logo2.png'
+    with open(copy_f_name,'wb') as copy_f:
+        copy_f.write(b)
+        print("文件复制成功")
+```
+
+​			
