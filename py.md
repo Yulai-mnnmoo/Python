@@ -2210,3 +2210,454 @@ with open(f_name,'rb') as f:
 ```
 
 ​			
+
+
+
+## 图形用户界面
+
+### Py中的图形用户界面开发库
+
+#### 	1 Tkinter 
+
+​		Tkinter是Python官方提供的图形用户界面开发库，用于封装Tk GUI工具包，跨平台。但是，Tkinter工具包所包含的控件较少，帮助文档不健全，不便于我们开发复杂的图形用户界面
+
+#### 	2 PyQt
+
+​		PyQt是非Python官方提供的图形用户界面开发库，用于封装Qt工具包，跨平台。若想使用PyQt工具包，则需要额外安装软件包。
+
+#### 	3 wxPython
+
+​		wxPython是非Python官方提供的图形用户界面开发库，也跨平台。它提供了丰富的控件，可用于开发复杂的图形用户界面。它的工具包帮助文档很完善，案例也很丰富
+
+### 安装wxPython
+
+​	在命令提示符（终端）窗口输入pip指令：pip install wxPython     ---> successfully
+
+#### 	第一个wxPython程序
+
+​		编写wxPython程序其实主要是创建窗口和添加控件的过程
+		建一个最简单的wxPython程序，则至少需要一个应用（wx.App）对象和一个窗口（wx.Frame）对象。
+
+```python
+#coding=utf-8
+import wx
+#创建应用程序对象
+app=wx.App()
+
+#创建窗口对象
+frm=wx.Frame(None,title="第一个程序",size=(400,300),pos=(100,100)) #参数1：所在父窗口 没有则用None  参数2：窗口名称   参数3：窗口大小  参数4：窗口位置
+
+#显示窗口
+frm.Show()    #窗口 默认是隐藏 需要调用show方法才能显示
+
+#进入主事件循环   事件循环是一种事件或消息分发处理机制，大部分图形用户界面在界面中的显示和响应用户事件的处理都是通过主事件循环实现的
+app.MainLoop()
+```
+
+### 自定义窗口类
+
+​	可以自定义窗口（wx.Frame）类，以便于扩展功能
+
+```python
+
+#coding=utf-8
+import wx
+#创建应用程序对象
+app=wx.App()
+
+class MyFrame(wx.Frame):
+    def __init__(self):
+        super().__init__(None,title='事件处理',size=(500,300),pos=(100,100))
+        panel=wx.Panel(parent=self)
+        self.staticText=wx.StaticText( parent=panel,label='请单击ok按钮',pos=(110,20))
+        b=wx.Button(parent=panel,label='ok',pos=(100,50))  #创建按钮事件
+        self.Bind(wx.EVT_BUTTON,self.on_click,b)   #绑定事件 wx.EVT_BUTTON 是事件类型 self_on_click 是事件处理程序 b 是事件源 即按钮对象
+    def on_click(self,event): #事件处理程序
+        self.staticText.SetLabelText("JJJJlk")
+#创建窗口对象
+frm=MyFrame()
+
+#显示窗口
+frm.Show()    #窗口 默认是隐藏 需要调用show方法才能显示
+
+#进入主事件循环   事件循环是一种事件或消息分发处理机制，大部分图形用户界面在界面中的显示和响应用户事件的处理都是通过主事件循环实现的
+app.MainLoop()
+
+app=wx.App()
+
+```
+
+
+
+### 在窗口中添加控件
+
+​	一个面板（Panel）和一个静态文本（StaticText）。面板是一个没有标题栏的容器（可以容纳其他控件的控件）。
+	面板被放到窗口中，而静态文本对象被放到面板中
+
+### 事件处理
+
+​	图形界面的控件要响应用户的操作，就必须添加事件处理机制
+	主要内容:
+		1 事件源：事件发生的场所，就是各个控件，例如按钮事件的事件源是按钮。
+		2 事件：wxPython中的事件被封装为事件类wx.Event及其子类，例如按钮事件类是wx.CommandEvent，鼠标事件类是wx.MoveEvent。
+		3 事件处理程序：一个响应用户事件的方法。
+
+```python
+#coding=utf-8
+import wx
+#创建应用程序对象
+app=wx.App()
+#自定义窗口类 MyFrame
+class MyFrame(wx.Frame):
+    def __init__(self):
+        super().__init__(None,title='事件处理',size=(300,180),pos=(100,100))
+        panel=wx.Panel(parent=self)
+        self.staticText = wx.StaticText(parent=panel,label="请单击ok按钮")
+        b = wx.Button(parent=panel, label='ok')
+        self.Bind(wx.EVT_BUTTON,self.on_click,b)
+
+        #创建垂直方向的盒子布局管理对象vbox
+        vbox=wx.BoxSizer(wx.VERTICAL)
+        #添加静态文本到vbox的布局管理器
+        vbox.Add(self.staticText,proportion=1,flag=wx.ALIGN_CENTER_HORIZONTAL|wx.FIXED_MINSIZE|wx.Top,border=30) #wx.FIXED_MINSIZE  刚好包裹控件   wx.ALIGN_CENTER_HORIZONTAL 控制水平居中
+        #添加按钮b到vbox布局管理器
+        vbox.Add(b,proportion=1,flag=wx.EXPAND|wx.BOTTOM,border=10)  #wx.EXPAND  完全填满有效空间   propertion 都为1  所以两个控件各占1/2
+        #设置面板panel 采用vbox布局管理器
+        panel.SetSizer(vbox)  #两个控件都被放到面板中 所以需要设置面板布局为盒子布局
+    def on_click(self,event): #事件处理程序
+        self.staticText.SetLabelText("JJJJlk")
+#创建窗口对象
+frm=MyFrame()
+#显示窗口
+frm.Show()    #窗口 默认是隐藏 需要调用show方法才能显示
+#进入主事件循环   事件循环是一种事件或消息分发处理机制，大部分图形用户界面在界面中的显示和响应用户事件的处理都是通过主事件循环实现的
+app.MainLoop()
+```
+
+### 布局管理
+
+​	wxPython提供了布局管理器类帮助实现界面布局，主要分为两大类：盒子布局管理器和网格布局管理器
+
+#### 	盒子布局管理器
+
+​		盒子布局管理器类是wx.BoxSizer，Box布局管理器是最常用的布局管理器，它可以让其中的子窗口（或控件）沿垂直或水平方向布局。
+
+##### 		创建盒子布局管理器对象
+
+​			wx.BoxSizer(wx.HORIZONTAL)   --》 水平方向布局  默认值
+			wx.BoxSizer(wx.VERTICAL)     --》 垂直方向布局
+
+##### 		添加子窗口（或控件）到父窗口
+
+​			wx.BoxSizer对象的Add（）方法添加子窗口（或控件）到父窗口
+			Add(window,proportion=0,flag=0,border=0)
+				proportion参数用于设置当前子窗口（或控件）在父窗口中所占的空间比例
+				flag参数是布局标志，用来控制对齐方式、边框和调整尺寸
+				border参数用于设置边框的宽度。
+
+flag参数对齐方式：
+
+![](D:\work\个人包\Python\图片\flag对齐标志.png)
+
+flag参数边框标志：
+
+![](D:\work\个人包\Python\图片\flag边框标志.png)
+
+flag参数调整尺寸：
+
+![](D:\work\个人包\Python\图片\flag调整尺寸.png)
+
+##### 		盒子布局管理器嵌套示例
+
+​			布局管理器还可以进行嵌套
+
+```python
+#coding=utf-8
+import wx
+#创建应用程序对象
+app=wx.App()
+#自定义窗口类 MyFrame
+class MyFrame(wx.Frame):
+    def __init__(self):
+        super().__init__(None,title='布局管理器嵌套',size=(300,180),pos=(100,100))
+        panel=wx.Panel(parent=self)
+        self.staticText = wx.StaticText(parent=panel,label="请单击按钮")
+        b1=wx.Button(parent=panel,label='Button1',id=10)
+        b2 = wx.Button(parent=panel, label='Button2', id=20)
+
+        hbox=wx.BoxSizer(wx.HORIZONTAL)
+        hbox.Add(b1,proportion=1,flag=wx.EXPAND|wx.ALL,border=10)
+        hbox.Add(b2,proportion=1,flag=wx.EXPAND|wx.ALL,border=10)
+
+        vbox=wx.BoxSizer(wx.VERTICAL)
+        vbox.Add(self.staticText,proportion=1,flag=wx.ALIGN_CENTER_HORIZONTAL|wx.FIXED_MINSIZE|wx.Top,border=10)
+        vbox.Add(hbox,proportion=1,flag=wx.CENTER)
+
+        panel.SetSizer(vbox)
+
+        self.Bind(wx.EVT_BUTTON,self.on_click,id=10,id2=20)
+
+    def on_click(self,event): #事件处理程序
+        event_id=event.GetId()
+        print(event_id)
+        if event_id==10:
+            self.staticText.SetLabelText("BUTTON1")
+        else:
+            self.staticText.SetLabelText("BUTTON2")
+#创建窗口对象
+frm=MyFrame()
+#显示窗口
+frm.Show()    #窗口 默认是隐藏 需要调用show方法才能显示
+#进入主事件循环   事件循环是一种事件或消息分发处理机制，大部分图形用户界面在界面中的显示和响应用户事件的处理都是通过主事件循环实现的
+app.MainLoop()
+```
+
+### 控件
+
+​	wxPython的所有控件都继承自wx.Control类
+
+#### 	文本输入控件
+
+​		文本输入控件（wx.TextCtrl）是可以输入文本的控件
+
+```python
+#coding=utf-8
+import wx
+#创建应用程序对象
+app=wx.App()
+
+class MyFrame(wx.Frame):
+    def __init__(self):
+        super().__init__(None,title='文本输入控件',size=(300,260))
+        panel=wx.Panel(parent=self)
+        tc1=wx.TextCtrl(panel)   #创建普通文本输入控件
+        tc2=wx.TextCtrl(panel,style=wx.TE_PASSWORD)  #创建密码输入控件
+        tc3=wx.TextCtrl(panel,style=wx.TE_MULTILINE) #创建多行文本输入控件
+
+        userid=wx.StaticText(panel,label='用户ID')
+        pwd=wx.StaticText(panel,label='密码')
+        content=wx.StaticText(panel,label='多行文本')
+
+        #创建垂直方向的盒子管理器对象
+        vbox=wx.BoxSizer(wx.VERTICAL)
+
+        #添加控件到盒子管理器对象中去
+        vbox.Add(userid,flag=wx.EXPAND|wx.LEFT,border=10)
+        vbox.Add(tc1, flag=wx.EXPAND | wx.ALL, border=10)
+        vbox.Add(pwd, flag=wx.EXPAND | wx.LEFT, border=10)
+        vbox.Add(tc2, flag=wx.EXPAND | wx.ALL, border=10)
+        vbox.Add(content, flag=wx.EXPAND | wx.LEFT, border=10)
+        vbox.Add(tc3, flag=wx.EXPAND | wx.ALL, border=10)
+
+        #设置面板panel采用vbox布局
+        panel.SetSizer(vbox)
+
+        #设置tc1初始值
+        tc1.SetValue('Tom')
+        #获取tc1的值
+        print('读取用户ID,{0}'.format(tc1.GetValue()))
+
+#创建窗口对象
+frm=MyFrame()
+
+#显示窗口
+frm.Show()    #窗口 默认是隐藏 需要调用show方法才能显示
+
+#进入主事件循环   事件循环是一种事件或消息分发处理机制，大部分图形用户界面在界面中的显示和响应用户事件的处理都是通过主事件循环实现的
+app.MainLoop()
+
+app=wx.App()
+```
+
+#### 	复选框和单选按钮
+
+​		多选控件是复选框（wx.CheckBox），复选框（wx.CheckBox）有时也能单独使用，能提供两种状态的开和关。
+		单选控件是单选按钮（wx.RadioButton），同一组的多个单选按钮应该具有互斥性，就是当一个按钮按下时，其他按钮一定释放
+
+```python
+
+#coding=utf-8
+import wx
+#创建应用程序对象
+app=wx.App()
+
+class MyFrame(wx.Frame):
+    def __init__(self):
+        super().__init__(None,title='复选框和单选按钮，',size=(500,260))
+        panel=wx.Panel(parent=self)
+
+        st1=wx.StaticText(panel,label='选择你喜欢的编程语言：')
+        cb1=wx.CheckBox(panel,id=1,label='Python')
+        cb2 = wx.CheckBox(panel, id=2, label='java')
+        cb2.SetValue(True)  #设置cb2的初始状态为选中
+        cb3 = wx.CheckBox(panel, id=3, label='C++')
+
+        self.Bind(wx.EVT_CHECKBOX,self.on_check_box,id=1,id2=3)  #绑定id为1~3的所有控件的事件处理到on_check_box方法
+
+        st2=wx.StaticText(panel,label='选择性别')
+        radio1=wx.RadioButton(panel,id=4,label='男',style=wx.RB_GROUP)  #设置style=wx.RB_GROUP是一个组的开始，直到遇到另外设置style=wx.RB_GROUP为止都是同一个组  所以radio1  radio2是同一组，且互斥
+        radio2 = wx.RadioButton(panel, id=5, label='女')
+
+        self.Bind(wx.EVT_RADIOBUTTON,self.on_radio_box,id=4,id2=5)  #定id为4~5的所有控件的事件处理到on_radio_box方法
+
+        hbox1=wx.BoxSizer()
+        hbox1.Add(st1,flag=wx.LEFT|wx.RIGHT,border=5)
+        hbox1.Add(cb1)
+        hbox1.Add(cb2)
+        hbox1.Add(cb3)
+
+        hbox2=wx.BoxSizer()
+        hbox2.Add(st2,flag=wx.LEFT|wx.RIGHT,border=5)
+        hbox2.Add(radio1)
+        hbox2.Add(radio2)
+
+        vbox=wx.BoxSizer(wx.VERTICAL)
+        vbox.Add(hbox1,flag=wx.ALL,border=10)
+        vbox.Add(hbox2,flag=wx.ALL,border=10)
+
+        #设置面板采用vbox布局管理器
+        panel.SetSizer(vbox)
+
+    def on_check_box(self,event):
+        cb=event.GetEventObject()
+        print("选择{0}，状态{1}".format(cb.GetLabel,event.IsChecked()))
+    def on_radio_box(self,event):
+        rb=event.GetEventObject()
+        print("第一组，{1}被选中".format(rb.GetLabel))
+#创建窗口对象
+frm=MyFrame()
+
+#显示窗口
+frm.Show()    #窗口 默认是隐藏 需要调用show方法才能显示
+
+#进入主事件循环   事件循环是一种事件或消息分发处理机制，大部分图形用户界面在界面中的显示和响应用户事件的处理都是通过主事件循环实现的
+app.MainLoop()
+
+app=wx.App()
+
+
+```
+
+
+
+#### 	列表
+
+​		对列表控件可以进行单选或多选,列表控件类是wx.ListBox。
+		创建列表控件时参数style取值：
+			wx.LB_SINGLE  单选
+			wx.LB_EXTENDED 多选
+			wx.LB_EXTENDED  多选，但是需要在按住Ctrl或Shift键时选择项目。
+			wx.LB_SORT 对列表选择项进行排序
+
+```python
+
+#coding=utf-8
+import wx
+#创建应用程序对象
+app=wx.App()
+
+class MyFrame(wx.Frame):
+    def __init__(self):
+        super().__init__(None,title='文本输入控件',size=(300,260))
+        panel=wx.Panel(parent=self)
+
+        st1=wx.StaticText(panel,label='选择你喜欢的编程语言：')
+        list1=['Python','Java','C++']
+        lb1=wx.ListBox(panel,choices=list1,style=wx.LB_SINGLE)  #wx.LB_SINGLE  表示创建单选列表控件   参数choices用于设置选项
+        self.Bind(wx.EVT_LISTBOX,self.on_list1,lb1)    #绑定列表选择事件
+
+        st2 = wx.StaticText(panel, label='选择你喜欢吃的水果：')
+        list2 = ['苹果', '橘子', '香蕉']
+        lb2 = wx.ListBox(panel, choices=list2, style=wx.LB_EXTENDED)    #wx.LB_EXTENDED 表示创建多选列表控件
+        self.Bind(wx.EVT_LISTBOX, self.on_list2, lb2)
+
+        hbox1=wx.BoxSizer()
+        hbox1.Add(st1,proportion=1,flag=wx.LEFT|wx.RIGHT,border=5)
+        hbox1.Add(lb1,proportion=1)
+
+        hbox2 = wx.BoxSizer()
+        hbox2.Add(st2, proportion=1, flag=wx.LEFT | wx.RIGHT, border=5)
+        hbox2.Add(lb2, proportion=1)
+
+        vbox=wx.BoxSizer(wx.VERTICAL)
+        vbox.Add(hbox1,flag=wx.ALL|wx.EXPAND,border=5)
+        vbox.Add(hbox2,flag=wx.ALL|wx.EXPAND,border=5)
+
+        panel.SetSizer(vbox)
+
+    def on_list1(self,event):
+        listbox=event.GetEventObject()
+        print('选择{}'.format(listbox.GetSelection()))  # GetSelection    返回单个选中项目的索引序号
+    def on_list2(self,event):
+        listbox=event.GetEventObject()
+        print('选择{}'.format(listbox.GetSelections()))   # GetSelections  返回多个 选中项目索引列表
+#创建窗口对象
+frm=MyFrame()
+
+#显示窗口
+frm.Show()    #窗口 默认是隐藏 需要调用show方法才能显示
+
+#进入主事件循环   事件循环是一种事件或消息分发处理机制，大部分图形用户界面在界面中的显示和响应用户事件的处理都是通过主事件循环实现的
+app.MainLoop()
+
+app=wx.App()
+
+
+```
+
+
+
+#### 	静态图片控件
+
+​		静态图片控件用于显示一张图片，图片可以是wx.Python所支持的任意图片格式，静态图片控件类是wx.StaticBitmap。
+
+```python
+
+#coding=utf-8
+import wx
+#创建应用程序对象
+app=wx.App()
+
+class MyFrame(wx.Frame):
+    def __init__(self):
+        super().__init__(None,title='文本输入控件',size=(300,260))
+        self.panel=wx.Panel(parent=self)   #创建一个面板 他是该类的实例变量
+
+        self.bmps=[wx.Bitmap('logo.png',wx.BITMAP_TYPE_PNG),wx.Bitmap('logo2.png',wx.BITMAP_TYPE_PNG),wx.Bitmap('logo1.png',wx.BITMAP_TYPE_PNG)]  #创建wx.Bitmap的列表对象
+
+        b1=wx.Button(self.panel,id=1,label="Button1")
+        b2= wx.Button(self.panel, id=2, label="Button2")
+        self.Bind(wx.EVT_BUTTON,self.on_click,id=1,id2=2)
+
+        self.image=wx.StaticBitmap(self.panel,bitmap=self.bmps[0])  #静态图片控件对象  self.bmps[0]是静态图片控件要显示的图片对象
+
+        vbox=wx.BoxSizer(wx.VERTICAL)
+        vbox.Add(b1,proportion=1,flag=wx.EXPAND)
+        vbox.Add(b2, proportion=1, flag=wx.EXPAND)
+        vbox.Add(self.image, proportion=3, flag=wx.EXPAND)
+
+        self.panel.SetSizer(vbox)
+
+    def on_click(self,event):
+        event_id=event.GetId()
+        if event_id==1:
+            self.image.SetBitmap(self.bmps[1])   #重新设置图片 实现图片切换
+        else:
+            self.image.SetBitmap(self.bmps[2])
+
+        self.panel.Layout()   #重新设置面板布局
+
+#创建窗口对象
+frm=MyFrame()
+
+#显示窗口
+frm.Show()    #窗口 默认是隐藏 需要调用show方法才能显示
+
+#进入主事件循环   事件循环是一种事件或消息分发处理机制，大部分图形用户界面在界面中的显示和响应用户事件的处理都是通过主事件循环实现的
+app.MainLoop()
+
+app=wx.App()
+
+
+```
+
