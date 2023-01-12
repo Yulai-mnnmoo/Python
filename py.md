@@ -2609,7 +2609,7 @@ app=wx.App()
 
 #### 	静态图片控件
 
-​		静态图片控件用于显示一张图片，图片可以是wx.Python所支持的任意图片格式，静态图片控件类是wx.StaticBitmap。
+​		静态图片控件用于显示一张图片，图片可以是wx.Python所支持的任意图片格式，静态图片控件类是wx.StaticBitmap。  在图片替换后 需要重新绘制窗口，否则布局会发生混乱
 
 ```python
 
@@ -2645,7 +2645,7 @@ class MyFrame(wx.Frame):
         else:
             self.image.SetBitmap(self.bmps[2])
 
-        self.panel.Layout()   #重新设置面板布局
+        self.panel.Layout()   #重新设置面板布局  在图片替换后 需要重新绘制窗口，否则布局会发生混乱
 
 #创建窗口对象
 frm=MyFrame()
@@ -2661,3 +2661,216 @@ app=wx.App()
 
 ```
 
+
+
+
+
+## 网络通信
+
+### 基本的网络知识
+
+#### TCP/IP
+
+​	TCP/IP是非常重要的协议，由IP和TCP两个协议构成   IP（Internet Protocol）是一种低级的路由协议，
+它将数据拆分在许多小的数据包中，并通过网络将它们发送到某一特定地址，但无法保证所有包都抵达目的地，
+也不能保证包按顺序抵达   ---》传输数据存在不安全性--》。TCP是一种高层次的协议，是面向连接的可靠数据传输协议，如果有些数据包没被收到，则会重发，对数据包的内容准确性进行检查并保证数据包按顺序抵达。
+
+#### IP地址
+
+​	为了实现网络中不同计算机之间的通信，每台计算机都必须有一个与众不同的标识，这就是IP地址，TCP/IP使用IP地址来标识源地址和目的地址
+	IPv4 ： 所有的IP地址都是由32位数字构成的，由4个8位的二进制数组成，每8位之间用圆点隔开，例如192.168.1.1
+	IPv6 :  IPv6使用128位数字表示一个地址,例如127.0.0.0 (本机：只发送数据，只进行本机进程间通信，不进行任何网络传输)
+
+#### 端口
+
+​	一个IP地址标识一台计算机，每一台计算机又有很多网络通信程序在运行，提供网络服务或进行通信，这就需要不同的端口进行通信
+	TCP/IP系统中的端口号是一个16位的数字，它的范围是 0～65535
+将小于1024的端口号保留给预定义的服务，例如HTTP是80，FTP是21，Telnet是23，Email是25，等等。除非要和那些服务进行通信，否则不应该使用小于1024的端口
+
+#### HTTP/HTTPS
+
+​	对互联网的访问大多基于HTTP/HTTPS，HTTP/HTTPS是TCP/IP的一种协议
+
+##### 	HTTP
+
+​		HTTP（Hypertext Transfer Protocol，超文本传输协议）属于应用层协议，其简捷、快速的方式适用于分布式超文本信息传输HTTP是无连接协议，即在每一次请求时都建立连接，服务器在处理完客户端的请求后，会先应答客户端，然后断开连接，不会一直占用网络资源
+		HTTP/1.1共定义了8种请求方法：OPTIONS、HEAD、GET、POST、PUT、DELETE、TRACE和CONNECT。GET和POST方法最常用。
+		GET方法   --》 "明信片"
+		用于向指定的资源发出请求，被发送的信息“显式”地跟在URL后面。它一般只用于读取数据，例如静态图片等
+		POST方法  --》 "信"
+		用于向指定的资源提交数据，请求服务器进行处理，例如提交表单或者上传文件等,数据被包含在请求体中
+
+##### 	HTTPS
+
+​		HTTPS（Hypertext Transfer Protocol Secure，超文本传输安全协议）是超文本传输协议和SSL的组合，用于提供加密通信及对网络服务器身份的鉴定。简单地说，HTTPS是加密的HTTP
+
+##### 	HTTPS与HTTP的区别		
+
+​		HTTPS使用https：//代替http：//，HTTPS使用端口443，而HTTP使用端口80与TCP/IP通信
+
+### 搭建自己的Web服务器
+
+#### 	1 安装JDK（Java开发工具包）
+
+#### 	2 配置Java运行环境
+
+#### 	3 安装Apache Tomcat服务器
+
+#### 	4 启动Apache Tomcat服务器
+
+#### 	5 测试Apache Tomcat服务器
+
+​		
+
+### urllib.request模块
+
+​	发送GET请求  如果要发送HTTP/HTTPS的GET请求，则可以使用urllib.request模块的Request对象
+
+```python
+# urllib.request模块  get请求
+import urllib.request
+
+url='http://localhost:8080/NoteWebService/note.do?action=query&ID=10'
+
+req=urllib.request.Request(url)   #创建Request请求  默认是get请求
+with urllib.request.urlopen(req) as response:  #发送网咯请求 response是需要释放的对象
+    data=response.read() #读取数据 为字节序列数据
+    json_data=data.decode() #将字节序列数据 转换为字符串
+    print(json_data)
+
+```
+
+​	发送POST请求  如果要发送HTTP/HTTPS的POST请求，则其发送流程与发送GET请求非常类似
+
+```python
+# urllib.request模块  post请求
+import urllib.request
+
+url='http://localhost:8080/NoteWebService/note.do'
+
+#准备http参数
+params_dict={"action":"query","ID":'10'}
+params_str=urllib.parse.urlencode(params_dict)  #将字典参数转化为字符串
+print(params_str)
+
+#字符串转化为字节序列对象
+params_bytes=params_str.encode()  #发送post请求时 参数以字节序列形式发送
+
+req=urllib.request.Request(url,data=params_bytes)  #发送post请求 创建了Request请求
+
+with urllib.request.urlopen(req) as response:  #发送网咯请求 response是需要释放的对象
+    data=response.read() #读取数据 为字节序列数据
+    json_data=data.decode() #将字节序列数据 转换为字符串
+    print(json_data)
+```
+
+
+
+### JSON数据
+
+#### 	JSON文档的结构
+
+​		构成JSON文档的两种结构为：JSON对象和JSON数组
+		1 JSON对象
+
+![](D:\work\个人包\Python\图片\JSON对象.png)
+
+​		2 JSON数组	
+
+![](D:\work\个人包\Python\图片\JSON数组.png)
+
+#### 	JSON数据的解码 --》  JSON数据被转换为Python数据
+
+​		JSON数据的解码（decode）指将JSON数据转换为Python数据，当从网络中接收或从磁盘中读取JSON数据时，需要将其解码为Python数据  
+
+![](D:\work\个人包\Python\图片\JSON数据和Python数据对比.png)
+
+​		使用json模块提供的loads（str）函数进行JSON数据的解码参数str是JSON字符串，返回Python数据
+
+```python
+
+import urllib.request
+import json
+
+url='http://localhost:8080/NoteWebService/note.do?action=query&ID=10'
+
+req=urllib.request.Request(url)   #创建Request请求  默认是get请求
+with urllib.request.urlopen(req) as response:  #发送网咯请求 response是需要释放的对象
+    data=response.read() #读取数据 为字节序列数据
+    json_data=data.decode() #将字节序列数据 转换为字符串
+    print(json_data)
+
+    py_dict=json.loads(json_data)  #解码JSON字符串 返回字典
+    print("备忘录ID",py_dict["ID"])
+    print("备忘录日期", py_dict["cDate"])
+    print("备忘录内容", py_dict["Content"])
+    print("用户ID", py_dict["UserID"])
+```
+
+
+
+### 下载图片示例
+
+```python
+import urllib.request
+
+url='http://localhost:8080/NoteWebService/logo.png'
+
+req=urllib.request.Request(url)
+with urllib.request.urlopen(url) as response:
+    data=response.read()
+    f_name='download.png'
+    with open(f_name,'wb') as f:
+        f.write(data)
+        print('文件下载成功')
+```
+
+
+
+### 返回所有备忘录信息	
+
+```python
+import urllib.request
+import json
+
+url='http://localhost:8080/NoteWebService/note.do?action=query&ID=10'
+
+req=urllib.request.Request(url)   #创建Request请求  默认是get请求
+with urllib.request.urlopen(req) as response:  #发送网咯请求 response是需要释放的对象
+    data=response.read() #读取数据 为字节序列数据
+    json_data=data.decode() #将字节序列数据 转换为字符串
+    print(json_data)
+
+    py_dict=json.loads(json_data)  #解码JSON字符串 返回字典
+    record_array=py_dict["Record"]
+
+    for record_obj in record_array:
+        print('备忘录记录---------------')
+        print("备忘录ID",py_dict["ID"])
+        print("备忘录日期", py_dict["cDate"])
+        print("备忘录内容", py_dict["Content"])
+        print("用户ID", py_dict["UserID"])
+```
+
+### 	
+
+
+
+### 	
+
+
+
+
+​		
+​		
+​		
+​		
+​		
+​		
+​		
+​		
+​		
+​		
+​		
+​		
+​		

@@ -9,7 +9,7 @@ class MyFrame(wx.Frame):
         super().__init__(None,title='文本输入控件',size=(300,260))
         self.panel=wx.Panel(parent=self)   #创建一个面板 他是该类的实例变量
 
-        self.bmps=[wx.Bitmap('logo.png',wx.BITMAP_TYPE_PNG),wx.Bitmap('logo2.png',wx.BITMAP_TYPE_PNG),wx.Bitmap('logo1.png',wx.BITMAP_TYPE_PNG)]  #创建wx.Bitmap的列表对象
+        self.bmps=[wx.Bitmap('logo.png',wx.BITMAP_TYPE_PNG),wx.Bitmap('logo2.png',wx.BITMAP_TYPE_PNG),wx.Bitmap('logo3.jpg',wx.BITMAP_TYPE_JPEG)]  #创建wx.Bitmap的列表对象
 
         b1=wx.Button(self.panel,id=1,label="Button1")
         b2= wx.Button(self.panel, id=2, label="Button2")
