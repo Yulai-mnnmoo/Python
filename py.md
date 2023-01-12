@@ -2856,7 +2856,271 @@ with urllib.request.urlopen(req) as response:  #发送网咯请求 response是�
 
 
 
-### 	
+
+
+## 访问数据库
+
+数据量较少，则我们可以将数据保存到文件中；数据量较大，则我们可以将数据保存到数据库中
+
+### SQLite数据库
+
+​	SQLite是嵌入式系统使用的关系数据库，目前的主流版本是SQLite3。SQLite是开源的，采用C语言编写而成，具有可移植性强、可靠性高、小而易用等特点
+
+#### 	SQLite数据类型
+
+​		SQLite是无数据类型的数据库，在创建表时不需要为字段指定数据类型
+		SQLite支持的常见数据类型如下
+			INTEGER：有符号的整数类型
+			REAL：浮点类型
+			TEXT：字符串类型，采用UTF-8和UTF-16字符编码
+			BLOB：二进制大对象类型，能够存放任意二进制数据
+	 	Python数据类型与SQLite数据类型的映射
+
+![](D:\work\个人包\Python\图片\Python数据类型与SQLite数据类型的映射.png)
+
+#### 	 SQLite和Oracle/MySql的区别
+
+​		SQLite是为嵌入式设备（如智能手机）设计的数据库 SQLite在运行时与使用它的应用程序之间公用相同的进程空间，
+		而在运行时，Oracle/MySql程序与使用它的应用程序在两个不同进程中
+
+### 使用GUI管理工具管理SQLite数据库
+
+#### 	1 安装和启动DB Browser for SQLite
+
+​		DB.Browser.for.SQLite-3.11.2-win32.zip  -》将该文件解压到一个目录中，在解压目录下找到DB Browser for SQLite.exe文件，双击该文件即可启动DB Browser for SQLite工具
+
+#### 	2 创建数据库
+
+​		一个SQLite数据库对应一个SQLite数据文件，为了测试DB Browserfor SQLite工具，我们要先创建SQLite数据库
+
+#### 	3 创建数据表
+
+​		在一个SQLite数据库中可以包含多个数据表。在上图所示的界面单击“保存”按钮，弹出建表对话框。
+
+#### 	4 执行SQL语句
+
+​		使用DB Browser for SQLite工具，可以执行任意合法的SQL语句
+
+#### 	5 浏览数据
+
+​		DB Browser for SQLite常用于浏览数据
+
+###  数据库编程的基本操作过程
+
+​	数据库编程主要分为两类：查询（Read）和修改（C插入、U更新、D删除）。
+
+#### 	1 查询数据
+
+​		查询数据时需要6步，在查询过程中需要提取数据结果集，最后释放资源，即关闭游标和数据库
+
+![](D:\work\个人包\Python\图片\SQLite数据库操作.png)
+
+#### 	2 修改数据
+
+​		修改数据时如上图所示，最多需要6步，在修改过程中如果执行SQL操作成功，则提交数据库事务；如果失败，则回滚事务。最后释放资源，关闭游标和数据库
+
+### sqlite3模块API
+
+#### 	数据库连接对象Connection
+
+​		数据库访问的第一步是进行数据库连接。
+		通过connect（database）函数参数database是SQLite数据库的文件路径，如果连接成功，则返回数据库连接对象Connection
+		Connection对象有如下重要的方法
+			close（）：关闭数据库连接，在关闭之后再使用数据库连接将引发异常。
+			commit（）：提交数据库事务。
+			rollback（）：回滚数据库事务。
+			cursor（）：获得Cursor游标对象
+
+#### 	游标对象Cursor
+
+​		一个Cursor游标对象表示一个数据库游标，游标暂时保存了SQL操作所影响到的数据。游标是通过数据库连接创建的。
+		游标Cursor对象有很多方法和属性，其中的基本SQL操作方法如下
+			execute（sql[，parameters]）：执行一条SQL语句，sql是SQL语句，parameters是为SQL提供的参数，可以是序列或字典类型。返回值是整数，表示执行SQL语句影响的行数。
+			executemany（sql[，seq_of_params]）：执行批量SQL语句，sql是SQL语句，seq_of_params是为SQL提供的参数，seq_of_params是序列。返回值是整数，表示执行SQL语句影响的行数。在通过execute（）和executemany（）方法执行SQL查询语句后，还要通过提取方法从查询结果集中返回数据，相关提取方法如下。
+			fetchone（）：从结果集中返回只有一条记录的序列，如果没有数据，则返回None。
+			fetchmany（size=cursor.arraysize）：从结果集中返回小于等于size记录数的序列，如果没有数据，则返回空序列，size在默认情况下是整个游标的行数。
+			fetchall（）：从结果集中返回所有数据。
+
+### 数据库的CRUD操作示例
+
+​		对数据库表中的数据可以进行4类操作：数据插入（Create）、数据查询（Read）、数据更新（Update）和数据删除（Delete），即增、删、改、查
+
+#### 	无条件查询
+
+```python
+#coding=utf-8
+#无条件查询
+import sqlite3
+
+try:
+    #建立数据连接
+    con=sqlite3.connect('../SQLite/my_db.db')
+    #创建游标对象
+    cursor=con.cursor()
+    #执行sql查询操作
+    sql='SELECT s_id,s_name,s_sex,s_birthday FROM student'
+    cursor.execute(sql)
+    #提取结果集
+    result_set=cursor.fetchall()
+    for row in result_set:
+        print("学号：{0}，姓名：{1},性别：{2},生日：{3}".format(row[0],row[1],row[2],row[3]))
+except sqlite3.Error as e:
+    print('数据查询发生错误{}'.format(e))
+finally:
+    #关闭游标
+    if cursor:
+        cursor.close()
+    #关闭数据连接
+    if con:
+        con.close()
+
+```
+
+
+
+#### 	有条件查询
+
+```python
+#coding=utf-8
+#有条件查询
+import sqlite3
+istr=input('请输入生日(yyyyMMdd):')
+try:
+    #建立数据连接
+    con=sqlite3.connect('../SQLite/my_db.db')
+    #创建游标对象
+    cursor=con.cursor()
+    #执行sql查询操作
+    sql='SELECT s_id,s_name,s_sex,s_birthday FROM student WHERE s_birthday<?'
+    cursor.execute(sql,[istr])
+    #提取结果集
+    result_set=cursor.fetchall()
+    for row in result_set:
+        print("学号：{0}，姓名：{1},性别：{2},生日：{3}".format(row[0],row[1],row[2],row[3]))
+except sqlite3.Error as e:
+    print('数据查询发生错误{}'.format(e))
+finally:
+    #关闭游标
+    if cursor:
+        cursor.close()
+    #关闭数据连接
+    if con:
+        con.close()
+
+```
+
+
+
+#### 	插入数据
+
+```python
+#coding=utf-8
+#有条件查询
+import sqlite3
+i_name=input('请输入姓名：')
+i_sex=input("请输入性别（1表示男 0表示女）：")
+i_birthday=input('请输入生日（yyyyMMdd）：')
+try:
+    #建立数据连接
+    con=sqlite3.connect('../SQLite/my_db.db')
+    #创建游标对象
+    cursor=con.cursor()
+    #执行sql查询操作
+    sql='INSERT INTO student(s_name,s_sex,s_birthday) VALUES(?,?,?)'
+    cursor.execute(sql,[i_name,i_sex,i_birthday])
+    #提交数据库事务
+    con.commit()
+    print("插入数据成功")
+except sqlite3.Error as e:
+    print('插入数据失败{}'.format(e))
+    #回滚事务
+    con.rollback()
+finally:
+    #关闭游标
+    if cursor:
+        cursor.close()
+    #关闭数据连接
+    if con:
+        con.close()
+
+```
+
+
+
+#### 	更新数据
+
+```python
+#coding=utf-8
+#有条件查询
+import sqlite3
+i_id=input("请输入学号：")
+i_name=input('请输入姓名：')
+i_sex=input("请输入性别（1表示男 0表示女）：")
+i_birthday=input('请输入生日（yyyyMMdd）：')
+try:
+    #建立数据连接
+    con=sqlite3.connect('../SQLite/my_db.db')
+    #创建游标对象
+    cursor=con.cursor()
+    #执行sql查询操作
+    sql='UPDATE student SET s_name=?,s_sex=?,s_birthday=? WHERE s_id=?'
+    cursor.execute(sql,[i_name,i_sex,i_birthday,i_id])
+    #提交数据库事务
+    con.commit()
+    print("更新数据成功")
+except sqlite3.Error as e:
+    print('更新数据失败{}'.format(e))
+    #回滚事务
+    con.rollback()
+finally:
+    #关闭游标
+    if cursor:
+        cursor.close()
+    #关闭数据连接
+    if con:
+        con.close()
+
+```
+
+
+
+#### 	删除数据
+
+```python
+#coding=utf-8
+#有条件查询
+import sqlite3
+i_id=input("请输入要删除学生的学号：")
+try:
+    #建立数据连接
+    con=sqlite3.connect('../SQLite/my_db.db')
+    #创建游标对象
+    cursor=con.cursor()
+    #执行sql查询操作
+    sql='DELETE FROM student WHERE s_id=?'
+    cursor.execute(sql,[i_id])
+    #提交数据库事务
+    con.commit()
+    print("删除数据成功")
+except sqlite3.Error as e:
+    print('删除数据失败{}'.format(e))
+    #回滚事务
+    con.rollback()
+finally:
+    #关闭游标
+    if cursor:
+        cursor.close()
+    #关闭数据连接
+    if con:
+        con.close()
+
+```
+
+
+
+### 防止SQL注入攻击
+
+​	
 
 
 
