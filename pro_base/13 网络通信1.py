@@ -13,7 +13,7 @@ with urllib.request.urlopen(req) as response:  #发送网咯请求 response是�
 # urllib.request模块  post请求
 import urllib.request
 
-url='http://localhost:8080/NoteWebService/note.do'
+url='https://www.baidu.com'
 
 #准备http参数
 params_dict={"action":"query","ID":'10'}
