@@ -3120,16 +3120,285 @@ finally:
 
 ### 防止SQL注入攻击
 
-​	
+​	在构建SQL时 不采用占位符占位 直接将实参 拼接起来
+
+如：sql='SELECT s_id,s_name,s_sex,s_birthday FROM student WHERE s_birthday<'+istr
+
+ 可以实现数据库的操作 但会有潜在风险 ‘SQL注入攻击’
+
+​	SQL注入攻击：是指在传递实参时，使用特殊字符或sql关键字 在拼接成SQL后 这条SQL语句有一定的攻击性 
 
 
 
+## 多线程
 
+### 线程相关的知识
+
+#### 	进程
+
+​		一个进程就是一个正在执行的程序，每一个进程都有自己独立的一块内存空间、一组系统资源。在进程的概念中，每一个进程的内部数据和状态都是完全独立的
+		在Windows操作系统中，一个进程就是一个exe或者dll程序，它们相互独立，相互也可以通信
+
+#### 	线程
+
+​		在一个进程中可以包含多个线程，多个线程共享一块内存空间和一组系统资源。所以，系统在各个线程之间切换时，开销要比进程小得多，正因如此，线程被称为轻量级进程。
+
+#### 	主线程
+
+​		Python程序至少有一个线程，这就是主线程，程序在启动后由Python解释器负责创建主线程，在程序结束后由Python解释器负责停止主线程。
+		在多线程中，主线程负责其他线程的启动、挂起、停止等操作。其他线程被称为子线程。
+
+### 线程模块——threading
+
+​	Python官方提供的threading模块可以进行多线程编程。
+	threading模块中提供了线程类Thread，还提供了很多线程相关的函数，如下
+		active_count（）：返回当前处于活动状态的线程个数。
+		current_thread（）：返回当前的Thread对象。
+		main_thread（）：返回主线程对象。
+
+```python
+#coding=utf-8
+#线程模块
+import threading
+#当前线程对象
+t=threading.current_thread()
+#当前线程名
+print(t.name)
+#返回当前处于活动状态的线程个数
+print(threading.active_count())
+
+#当前主线程对象
+t=threading.main_thread()
+#主线程名
+print(t.name)
+
+```
+
+
+
+### 创建子线程
+
+​	创建可执行的子线程，需要如下两个要素。
+		1 线程对象：线程对象是threading模块的线程类Thread或Thread子类所创建的对象。
+		2 线程体：线程体是子线程要执行的代码，代码会被封装到一个函数中。子线程在启动后会执行线程体。
+			实现线程体主要有以下两种方式：
+				1）自定义函数实现线程体。
+				2）自定义线程类实现线程体。
+
+#### 	自定义函数实现线程体
+
+​	创建线程Thread对象的构造方法：Thread(target=None,name=None,args=[])
+		target参数指向线程体函数，我们可以自定义该线程体函数
+		通过name参数可以设置线程名，如果省略这个参数，则系统会为其分配一个名称
+		args是为线程体函数提供的参数，是一个元组类型
+
+```python
+#coding=utf-8
+#创建子线程  自定义函数实现线程体
+import threading
+import time
+
+#线程体函数
+def thread_body():
+    #当前线程对象
+    t=threading.current_thread()
+    for n in range(5):
+        #当前线程名
+        print("第{0}次执行线程{1}".format(n,t.name))
+        #线程休眠
+        time.sleep(2)
+    print('线程{0}执行结束'.format(t.name))
+
+#主线程
+#创建子线程t1
+t1=threading.Thread(target=thread_body)
+#创建子线程t2
+t2=threading.Thread(target=thread_body,name='MYT')   #name=''   设置线程名
+#启动线程
+t1.start()
+t2.start()
+```
+
+
+
+#### 	自定义线程类实现线程体
+
+​		另外一种实现线程体的方式是，创建一个Thread子类并重写run（）方法，run（）方法就是线程体函数。
+
+```python
+#coding=utf-8
+#创建子线程  自定义线程类实现线程体
+import threading
+import time
+
+class SmallThread(threading.Thread):
+    def __init__(self,name=None):
+        super().__init__(name=name)
+    #线程体函数
+    def run(self):
+        #当前线程对象
+        t=threading.current_thread()
+        for n in range(5):
+            # 当前线程名
+            print("第{0}次执行线程{1}".format(n, t.name))
+            # 线程休眠
+            time.sleep(2)
+        print('线程{0}执行结束'.format(t.name))
+
+#主线程
+#创建子线程t1
+t1=SmallThread() #通过自定义线程类，创建线程对象
+#创建子线程t2
+t2=SmallThread(name='MYT') #name=''   设置线程名
+#启动线程
+t1.start()
+t2.start()
+```
+
+
+
+### 线程管理
+
+​	线程管理包括线程创建、线程启动、线程休眠、等待线程结束和线程停止
+
+#### 等待线程结束
+
+​	一个线程（假设是主线程）需要等待另外一个线程（假设是t1子线程）执行结束才能继续执行。 --> join（）方法
+	语法：join(timeout=None)
+	参数timeout用于设置超时时间，单位是秒.如果没有设置timeout则可以一直等待，直到结束。
+
+```python
+#coding=utf-8
+#线程管理  等待线程结束
+import threading
+import time
+#共享变量
+value=[]
+
+#线程体函数
+def thread_body():
+    #当前线程对象
+   print('t1子线程开始...')
+   for n in range(2):
+        print('t1子程序执行...')
+        value.append(n)
+        #线程休眠
+        time.sleep(2)
+   print('t1子线程结束。')
+
+#主线程
+print('主线程开始...')
+#创建子线程t1
+t1=threading.Thread(target=thread_body) #通过自定义线程类，创建线程对象
+#启动线程
+t1.start()
+#主程序被阻塞，等待t1子线程结束
+t1.join()
+print('value={0}'.format(value))
+print('主线程继续执行...')
+```
+
+
+
+#### 线程停止
+
+​	在线程体结束时，线程就停止了,但在某些业务比较复杂时，会在线程体中执行一个“死循环”。
+
+```python
+#coding=utf-8
+#线程管理  线程停止
+import threading
+import time
+#线程停止变量
+isrunning=True  #控制流程结束
+
+#工作线程体函数
+def workthread_body(): #工作线程体执行一些任务
+   while isrunning:   #工作线程 死循环
+       #线程开始工作
+       print('工作线程执行中....')
+       #线程休眠
+       time.sleep(2)
+   print('工作线程结束')
+#控制线程体函数
+def controlthread_body():   #控制线程体 从控制台读取指令 根据指令修改线程停止变量
+    global isrunning        #要修改isrunning 故声明变量为global
+    while isrunning:        #控制线程体  死循环
+        #从键盘输入停止指令
+        command=input('请输入停止指令：')
+        if command=='exit':
+            isrunning =False
+            print('控制线程结束')
+
+#主线程
+#创建工作线程对象workthead
+workthead=threading.Thread(target=workthread_body)
+#启动工作线程
+workthead.start()
+#创建控制线程对象controlthead
+controlthead=threading.Thread(target=controlthread_body)
+#启动控制线程
+controlthead.start()
+```
+
+
+
+### 下载图片示例
+
+```python
+#coding=utf-8
+#下载图片示例
+import threading
+import time
+import urllib.request
+#线程停止变量
+isrunning=True  #控制流程结束
+
+#工作线程体函数
+def workthread_body(): #工作线程体执行一些任务
+   while isrunning:   #工作线程 死循环
+       #线程开始工作
+       print('工作线程执行中....')
+       download()    #执行下载任务  每5秒调用一次
+       #线程休眠
+       time.sleep(5)
+   print('工作线程结束')
+#控制线程体函数
+def controlthread_body():   #控制线程体 从控制台读取指令 根据指令修改线程停止变量
+    global isrunning        #要修改isrunning 故声明变量为global
+    while isrunning:        #控制线程体  死循环
+        #从键盘输入停止指令
+        command=input('请输入停止指令：')
+        if command=='exit':
+            isrunning =False
+            print('控制线程结束')
+
+def download():   #下载函数  右工作线程调用
+    url='http://localhost:8080/NoteWebService/logo.png'
+    req=urllib.request.Request(url)
+    with urllib.request.urlopen(url) as respose:
+        data=respose.read()
+        f_name='dowbload.png'
+        with open(f_name,'wb') as f:
+            f.write(data)
+            print("下载文件成功")
+#主线程
+#创建工作线程对象workthead
+workthead=threading.Thread(target=workthread_body)
+#启动工作线程
+workthead.start()
+#创建控制线程对象controlthead
+controlthead=threading.Thread(target=controlthread_body)
+#启动控制线程
+controlthead.start()
+```
+
+​				
+​					
 ​		
 ​		
 ​		
-​		
-​		
+		
 ​		
 ​		
 ​		
